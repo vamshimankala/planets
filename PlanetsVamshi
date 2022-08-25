@@ -1,0 +1,70 @@
+import pandas as pd
+class Planet:
+  def __init__(self,name,surface_gasses,no_of_moons,whether_planet_has_rings):
+    self.name=name
+    self.surface_gasses=surface_gasses
+    self.no_of_moons=no_of_moons
+    self.whether_planet_has_rings=whether_planet_has_rings
+
+  def __iter__(self):
+    yield self
+    yield self.name
+    yield self.surface_gasses
+    yield self.no_of_moons
+    yield self.whether_planet_has_rings
+
+  @classmethod
+  def columns(cls):
+    return['no','planet','atmosphere gasses','Moons','Rings']
+
+class Struct:
+  def __init__(self):
+    self.planetary={}
+
+  def add_planets(self,planet_list):
+    self.planetary[planet_list.name]=planet_list
+  
+  @property
+  def planetLists(self):
+    return pd.DataFrame(list(self.planetary.values()),columns=Planet.columns())
+     
+  def moonsCountOfplanetHavingRings(self):
+    planetR=[]
+    noMoons=[]
+    for planets,objects in self.planetary.items():
+      if objects.whether_planet_has_rings=='yes':
+        planetR.append(planets)
+        noMoons.append(objects.no_of_moons)
+    return pd.DataFrame({'Planet':planetR,'Moons':noMoons})
+
+  def maximum_gasses(self):
+    gasses=[]
+    for planets,objects in self.planetary.items():
+      gasses.extend(objects.surface_gasses)
+    return max(set(gasses),key=gasses.count)
+planetaryData=Struct()
+planetaryData.add_planets(Planet('Mercury',[],0,'no'))
+planetaryData.add_planets(Planet('Venus',['carbon dioxide','ntirogen'],0,'no'))
+planetaryData.add_planets(Planet('Earth',['nitrogen','oxygen'],1,'no'))
+planetaryData.add_planets(Planet('Jupitor',['hydrogen','helium'],79,'yes'))
+planetaryData.add_planets(Planet('Saturn',['hydrogen','helium'],83,'yes'))
+planetaryData.add_planets(Planet('Uranus',['hydrogen','helium','methane'],27,'yes'))
+planetaryData.planetLists
+                     no	planet	atmosphere gasses	Moons	Rings
+0	<__main__.Planet object at 0x7f1c4b65a910>	Mercury	[]	0	no
+1	<__main__.Planet object at 0x7f1c4b65a990>	Venus	[carbon dioxide, ntirogen]	0	no
+2	<__main__.Planet object at 0x7f1c4b65a9d0>	Earth	[nitrogen, oxygen]	1	no
+3	<__main__.Planet object at 0x7f1c4b65a8d0>	Jupitor	[hydrogen, helium]	79	yes
+4	<__main__.Planet object at 0x7f1c4b65ab90>	Saturn	[hydrogen, helium]	83	yes
+5	<__main__.Planet object at 0x7f1c4b65abd0>	Uranus	[hydrogen, helium, methane]	27	yes
+print('Retrives the count moons of all planets with rings')
+planetaryData.moonsCountOfplanetHavingRings()
+Retrives the count moons of all planets with rings
+Planet	Moons
+0	Jupitor	79
+1	Saturn	83
+2	Uranus	27
+print('The gas that is found on Maximum Planets')
+planetaryData.maximum_gasses()
+The gas that is found on Maximum Planets
+'helium'  
